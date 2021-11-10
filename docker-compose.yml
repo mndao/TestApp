@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  consoleapp1:
+    image: ${DOCKER_REGISTRY-}consoleapp1
+    build:
+      context: .
+      dockerfile: ConsoleApp1/Dockerfile
+  mockServer:
+    image: mockserver/mockserver:mockserver-5.11.1
+    command: -logLevel DEBUG -serverPort 1090
+    ports:
+      - 1080:1090
+  localstack:
+    image: localstack/localstack:latest
+    environment: 
+        - AWS_DEFAULT_REGION=us-east-1
+        - EDGE_PORT=4566
+        - SERVICES=sqs,sns
+    ports: 
+        - '4566:4566'
+    volumes:
+        - ./aws:/docker-entrypoint-initaws.d
